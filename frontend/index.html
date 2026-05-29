@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI-Based Resume Analyzer | ATS Optimisation & Skills NLP Parser</title>
+  <meta name="description" content="AI-powered Applicant Tracking System (ATS) evaluation dashboard. Parse resume metrics, keyword matching, and prepare for interviews.">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/styles.css">
+  <!-- Load Chart.js CDN for beautiful interactive charts -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <!-- Hidden SVG Gradients for Logo and Styling -->
+  <svg style="width:0; height:0; position:absolute;" aria-hidden="true">
+    <defs>
+      <linearGradient id="logo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#6366f1" />
+        <stop offset="100%" stop-color="#06b6d4" />
+      </linearGradient>
+    </defs>
+  </svg>
+
+  <!-- NAVIGATION HEADER -->
+  <header>
+    <div class="logo" id="logo-btn">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M2 17L12 22L22 17" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M2 12L12 17L22 12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span>APEX Resume AI</span>
+    </div>
+    
+    <nav>
+      <ul class="nav-links">
+        <li><a class="nav-item" data-view="home">Home</a></li>
+        <li><a class="nav-item" data-view="dashboard" id="nav-dashboard" style="display:none;">Dashboard</a></li>
+        <li><a class="nav-item" data-view="admin" id="nav-admin" style="display:none;">Admin Panel</a></li>
+        <li><a class="nav-item" data-view="about">About Project</a></li>
+      </ul>
+    </nav>
+
+    <div style="display: flex; align-items: center; gap: 1.25rem;">
+      <button class="theme-toggle-btn" id="theme-toggle" title="Toggle Light/Dark Theme">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M12 7a5 5 0 100 10 5 5 0 000-10z"></path>
+        </svg>
+      </button>
+
+      <div class="user-badge" id="auth-nav-container">
+        <!-- Will be populated dynamically by auth.js -->
+        <button class="btn btn-secondary" id="login-nav-btn">Sign In</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN VIEWPORT CONTAINER -->
+  <main>
+    
+    <!-- 1. HOME / LANDING VIEW -->
+    <section class="view-section" id="view-home">
+      <div class="hero">
+        <div class="hero-text">
+          <h1>Evaluate Your Resume with <span>Advanced AI Analytics</span></h1>
+          <p>Apex Resume AI leverages custom Natural Language Processing (NLP) models to parse technical credentials, match keywords against market Job Descriptions, and generate customized ATS ratings and mock interview questions instantly.</p>
+          <div class="hero-cta">
+            <button class="btn btn-primary" id="hero-get-started">Analyze Your Resume</button>
+            <button class="btn btn-secondary" id="hero-learn-more">Methodology</button>
+          </div>
+        </div>
+        <div class="hero-visual">
+          <!-- Beautiful isometric dashboard vector graphic SVG -->
+          <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+            <rect x="50" y="80" width="300" height="240" rx="20" fill="var(--bg-secondary)" stroke="var(--glass-border)" stroke-width="2"/>
+            <rect x="70" y="110" width="100" height="30" rx="8" fill="var(--accent-primary)" opacity="0.15"/>
+            <rect x="80" y="120" width="50" height="10" rx="5" fill="var(--accent-primary)"/>
+            <circle cx="150" cy="125" r="5" fill="var(--accent-secondary)"/>
+            <!-- Score Gauge Mock inside hero svg -->
+            <circle cx="270" cy="200" r="50" fill="none" stroke="var(--bg-tertiary)" stroke-width="8"/>
+            <circle cx="270" cy="200" r="50" fill="none" stroke="var(--accent-primary)" stroke-width="8" stroke-dasharray="314" stroke-dashoffset="100"/>
+            <text x="270" y="208" text-anchor="middle" font-family="var(--font-heading)" font-weight="800" font-size="24" fill="var(--text-primary)">82%</text>
+            <!-- Mock Skills tag list in hero SVG -->
+            <rect x="80" y="180" width="60" height="20" rx="10" fill="var(--bg-tertiary)" stroke="var(--glass-border)"/>
+            <rect x="150" y="180" width="70" height="20" rx="10" fill="var(--bg-tertiary)" stroke="var(--glass-border)"/>
+            <rect x="80" y="210" width="80" height="20" rx="10" fill="var(--bg-tertiary)" stroke="var(--glass-border)"/>
+            <rect x="170" y="210" width="50" height="20" rx="10" fill="var(--bg-tertiary)" stroke="var(--glass-border)"/>
+            <!-- Line lines mock -->
+            <line x1="80" y1="260" x2="220" y2="260" stroke="var(--text-muted)" stroke-width="3" stroke-linecap="round"/>
+            <line x1="80" y1="280" x2="180" y2="280" stroke="var(--text-muted)" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="features-grid">
+        <div class="glass-panel feature-card">
+          <div class="feature-icon">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+          </div>
+          <h3>NLP Document Decoder</h3>
+          <p>Extracts formatted text blocks dynamically from PDF, DOCX, and TXT resumes while preserving syntax structure.</p>
+        </div>
+        <div class="glass-panel feature-card">
+          <div class="feature-icon">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+          </div>
+          <h3>ATS Keywords Assessor</h3>
+          <p>Checks keyword overlap against specific role descriptions, pointing out critical terms to optimize candidate indexing.</p>
+        </div>
+        <div class="glass-panel feature-card">
+          <div class="feature-icon">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          </div>
+          <h3>AI Interview Preparer</h3>
+          <p>Compiles personalized mock technical questions and key guidelines customized to the resume's skills profile.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. LOGIN / REGISTRATION VIEW -->
+    <section class="view-section" id="view-auth">
+      <div class="glass-panel auth-container">
+        <div class="auth-tabs">
+          <div class="auth-tab active" id="tab-login-btn">Sign In</div>
+          <div class="auth-tab" id="tab-register-btn">Create Account</div>
+        </div>
+
+        <!-- A. Login Form -->
+        <form id="login-form">
+          <div class="form-group">
+            <label for="login-email">Email Address</label>
+            <input type="email" id="login-email" class="form-input" placeholder="name@domain.com" required>
+          </div>
+          <div class="form-group">
+            <label for="login-password">Password</label>
+            <input type="password" id="login-password" class="form-input" placeholder="••••••••" required>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Authenticate</button>
+        </form>
+
+        <!-- B. Registration Form -->
+        <form id="register-form" style="display:none;">
+          <div class="form-group">
+            <label for="register-name">Full Name</label>
+            <input type="text" id="register-name" class="form-input" placeholder="Alex Smith" required>
+          </div>
+          <div class="form-group">
+            <label for="register-email">Email Address</label>
+            <input type="email" id="register-email" class="form-input" placeholder="alex@domain.com" required>
+          </div>
+          <div class="form-group">
+            <label for="register-password">Password (min 6 chars)</label>
+            <input type="password" id="register-password" class="form-input" placeholder="••••••••" minlength="6" required>
+          </div>
+          <div class="form-group">
+            <label for="register-role">Account Purpose</label>
+            <select id="register-role" class="form-input">
+              <option value="user">Job Seeker (Candidate)</option>
+              <option value="admin">Recruiter (System Admin)</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Register Account</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- 3. RESUME UPLOAD DASHBOARD -->
+    <section class="view-section" id="view-dashboard">
+      <div class="dashboard-grid">
+        
+        <!-- Upload Form Panel -->
+        <div class="glass-panel upload-card">
+          <h2>
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+            Analyze New Resume
+          </h2>
+          
+          <form id="analyze-form">
+            <!-- Drag and Drop Zone -->
+            <div class="dropzone-container" id="dropzone">
+              <input type="file" id="file-input" accept=".pdf,.txt,.docx" style="display:none;">
+              <div class="dropzone-icon">
+                <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z"></path>
+                </svg>
+              </div>
+              <div class="dropzone-text">
+                <h3>Drag & Drop Resume</h3>
+                <p>PDF, Word Document (DOCX), or Plain Text (.txt) up to 5MB</p>
+              </div>
+            </div>
+
+            <!-- Upload File Status Tag -->
+            <div class="file-status-badge" id="file-status">
+              <span id="file-name-display" style="font-weight: 600; font-size: 0.9rem;">resume.pdf</span>
+              <button type="button" class="btn btn-secondary" id="clear-file-btn" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">Remove</button>
+            </div>
+
+            <!-- Target Job Parameters -->
+            <div class="form-group">
+              <label for="target-title">Target Job Title</label>
+              <select id="target-title" class="form-input">
+                <option value="Software Engineer">Software Engineer (General)</option>
+                <option value="Frontend Developer">Frontend Developer</option>
+                <option value="Backend Developer">Backend Developer</option>
+                <option value="Fullstack Engineer">Fullstack Engineer</option>
+                <option value="DevOps Engineer">DevOps Engineer</option>
+                <option value="Data Scientist">Data Scientist</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="job-desc">Target Job Description (for exact keyword mapping)</label>
+              <textarea id="job-desc" class="form-input" style="height: 140px; resize: none; font-size: 0.9rem;" placeholder="Paste the complete job description text here to calculate the exact keyword overlap, match percentage, and list of missing credentials..."></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width:100%; margin-top: 1rem;" id="submit-analysis-btn">
+              Start AI Extraction
+            </button>
+          </form>
+        </div>
+
+        <!-- History Listing Panel -->
+        <div class="glass-panel history-card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h2>
+              <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+              Evaluation History
+            </h2>
+            <button class="btn btn-secondary" id="export-csv-btn" style="padding: 0.5rem 1rem; font-size: 0.85rem;" title="Download full history as CSV">Export CSV</button>
+          </div>
+
+          <div class="history-table-container">
+            <table class="history-table">
+              <thead>
+                <tr>
+                  <th>Resume</th>
+                  <th>Job Title</th>
+                  <th>ATS Score</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="history-rows-container">
+                <!-- Populated dynamically by dashboard.js -->
+                <tr>
+                  <td colspan="4" style="text-align: center; color: var(--text-muted); padding: 3rem 0;">
+                    No resume evaluations completed yet. Upload a resume above to start!
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 4. RESUME ANALYSIS REPORT -->
+    <section class="view-section" id="view-report">
+      
+      <!-- Report Header -->
+      <div class="glass-panel report-header-card">
+        <div class="report-summary-info">
+          <h1 id="report-candidate-name">Alex Smith</h1>
+          <p id="report-meta-info">File: resume.pdf • Evaluated for Frontend Developer</p>
+        </div>
+        <div style="display: flex; gap: 1rem;">
+          <button class="btn btn-secondary" id="report-print-btn">Print Report</button>
+          <button class="btn btn-primary" id="report-back-btn">Back to Dashboard</button>
+        </div>
+      </div>
+
+      <!-- Core Report Layout Grid -->
+      <div class="report-layout-grid">
+        
+        <!-- Score Circular Gauge & Sub-scores -->
+        <div class="glass-panel score-card">
+          <h3>ATS Compatibility Index</h3>
+          
+          <div class="gauge-wrapper">
+            <svg class="gauge-svg">
+              <circle class="gauge-bg" cx="100" cy="100" r="90"></circle>
+              <circle class="gauge-fill" id="report-score-ring" cx="100" cy="100" r="90"></circle>
+            </svg>
+            <div class="gauge-value" id="report-score-text">0<span class="gauge-percent">%</span></div>
+          </div>
+
+          <div class="score-badge" id="report-score-badge">Optimised</div>
+
+          <!-- Section Sub-scores Bar Breakdown -->
+          <div class="metrics-list">
+            <div class="metric-bar-group">
+              <div class="metric-bar-label">
+                <span>Keyword Match Overlap</span>
+                <span id="metric-keyword-text">0%</span>
+              </div>
+              <div class="metric-bar-outer">
+                <div class="metric-bar-inner" id="metric-keyword-bar"></div>
+              </div>
+            </div>
+            
+            <div class="metric-bar-group">
+              <div class="metric-bar-label">
+                <span>Skills Breadth Score</span>
+                <span id="metric-skills-text">0%</span>
+              </div>
+              <div class="metric-bar-outer">
+                <div class="metric-bar-inner" id="metric-skills-bar"></div>
+              </div>
+            </div>
+
+            <div class="metric-bar-group">
+              <div class="metric-bar-label">
+                <span>Structural layout score</span>
+                <span id="metric-structural-text">0%</span>
+              </div>
+              <div class="metric-bar-outer">
+                <div class="metric-bar-inner" id="metric-structural-bar"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Detailed Analytics Tabs -->
+        <div class="glass-panel" style="padding: 2rem;">
+          <div class="report-tabs">
+            <button class="report-tab-btn active" data-tab="tab-skills">Extracted Skills</button>
+            <button class="report-tab-btn" data-tab="tab-suggestions">ATS Suggestions</button>
+            <button class="report-tab-btn" data-tab="tab-interview">Interview Prep</button>
+            <button class="report-tab-btn" data-tab="tab-segments">Raw Segments</button>
+          </div>
+
+          <!-- Tab Content A: Extracted & Missing Skills Tags -->
+          <div class="detail-pane active" id="tab-skills">
+            <h3 style="margin-bottom: 0.5rem;">Candidate Technical Matrix</h3>
+            <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom: 1.5rem;">Below is the distribution of skills matching the job description requirements as well as detected gaps.</p>
+            
+            <h4 style="font-size: 0.95rem; margin-bottom: 0.5rem; color:var(--color-success);">Extracted Matching Keywords</h4>
+            <div class="skills-tags-container" id="matched-skills-container">
+              <!-- Rendered Dynamically -->
+            </div>
+
+            <h4 style="font-size: 0.95rem; margin-top: 2rem; margin-bottom: 0.5rem; color:var(--color-danger);">Missing Core Keywords</h4>
+            <div class="skills-tags-container" id="missing-skills-container">
+              <!-- Rendered Dynamically -->
+            </div>
+          </div>
+
+          <!-- Tab Content B: Suggestions list -->
+          <div class="detail-pane" id="tab-suggestions">
+            <h3>ATS Formatting Recommendations</h3>
+            <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom: 1.5rem;">Adjust these metrics in your document formatting to bypass automated system blocks.</p>
+            <ul class="bullet-list suggestions-list" id="suggestions-container">
+              <!-- Rendered Dynamically -->
+            </ul>
+          </div>
+
+          <!-- Tab Content C: Interview Questions Accordion -->
+          <div class="detail-pane" id="tab-interview">
+            <h3>Custom Technical Interview Simulator</h3>
+            <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom: 1.5rem;">Based on your tech stack matches and targeted gaps, we compiled customized screening questions.</p>
+            <div class="question-accordion" id="interview-questions-container">
+              <!-- Rendered Dynamically -->
+            </div>
+          </div>
+
+          <!-- Tab Content D: Raw Text Segments (Experience/Education) -->
+          <div class="detail-pane" id="tab-segments">
+            <h3>Extracted Structural Content</h3>
+            <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom: 1.5rem;">These are the section paragraphs parsed directly by the NLP segmentation scanner.</p>
+            
+            <h4 style="font-size: 1rem; margin-bottom: 0.5rem; color:var(--accent-primary);">Experience / Professional Segment</h4>
+            <div id="segment-experience-container" style="background:var(--bg-secondary); padding: 1rem; border-radius:var(--radius-sm); font-size: 0.9rem; line-height: 1.6; border-left:3px solid var(--accent-primary); margin-bottom: 1.5rem; max-height: 200px; overflow-y: auto;">
+              <!-- Rendered Dynamically -->
+            </div>
+
+            <h4 style="font-size: 1rem; margin-bottom: 0.5rem; color:var(--accent-secondary);">Education / Academic Segment</h4>
+            <div id="segment-education-container" style="background:var(--bg-secondary); padding: 1rem; border-radius:var(--radius-sm); font-size: 0.9rem; line-height: 1.6; border-left:3px solid var(--accent-secondary); max-height: 200px; overflow-y: auto;">
+              <!-- Rendered Dynamically -->
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 5. ADMIN TELEMETRY PANEL -->
+    <section class="view-section" id="view-admin">
+      <div style="margin-bottom: 2rem;">
+        <h1>Recruitment Operations Dashboard</h1>
+        <p style="color:var(--text-secondary);">Evaluate aggregated candidate analytics, score tracking metrics, and processing pipelines.</p>
+      </div>
+
+      <!-- Quick stats bar -->
+      <div class="admin-stats-bar">
+        <div class="glass-panel stat-card">
+          <div class="stat-icon">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+          </div>
+          <div>
+            <div class="stat-num" id="admin-stat-users">0</div>
+            <div class="stat-label">Total Registered Users</div>
+          </div>
+        </div>
+
+        <div class="glass-panel stat-card">
+          <div class="stat-icon" style="background: var(--accent-secondary-glow); color: var(--accent-secondary);">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+          </div>
+          <div>
+            <div class="stat-num" id="admin-stat-resumes">0</div>
+            <div class="stat-label">Resumes Analyzed</div>
+          </div>
+        </div>
+
+        <div class="glass-panel stat-card">
+          <div class="stat-icon" style="background: var(--color-success-glow); color: var(--color-success);">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2z"></path></svg>
+          </div>
+          <div>
+            <div class="stat-num" id="admin-stat-score">0%</div>
+            <div class="stat-label">Average ATS Match</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts grid -->
+      <div class="admin-charts-grid">
+        <!-- Distribution bar chart -->
+        <div class="glass-panel">
+          <h3 style="margin-bottom: 1.5rem;">ATS Rating Distribution</h3>
+          <div style="position: relative; height: 300px;">
+            <canvas id="chart-distribution"></canvas>
+          </div>
+        </div>
+        
+        <!-- Domain Radar categories chart -->
+        <div class="glass-panel">
+          <h3 style="margin-bottom: 1.5rem;">Evaluation Categories Breakdown</h3>
+          <div style="position: relative; height: 300px;">
+            <canvas id="chart-categories"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Global Activity logs -->
+      <div class="glass-panel">
+        <h3 style="margin-bottom: 1.5rem;">Platform Activity Tracker (Recent Analysis)</h3>
+        <div class="history-table-container">
+          <table class="history-table">
+            <thead>
+              <tr>
+                <th>Candidate</th>
+                <th>File Uploaded</th>
+                <th>Role Targeted</th>
+                <th>Score</th>
+                <th>Evaluation Date</th>
+              </tr>
+            </thead>
+            <tbody id="admin-activity-container">
+              <tr>
+                <td colspan="5" style="text-align:center; padding: 2.5rem 0; color:var(--text-muted);">
+                  No activities registered.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. ABOUT PROJECT / DOCUMENTATION VIEW -->
+    <section class="view-section" id="view-about">
+      <div class="about-grid">
+        
+        <div class="glass-panel about-text">
+          <h2>AI Resume Analyzer Project</h2>
+          <p>This application was developed as an industry-standard, fully functional final year college major-project. It showcases deep full-stack engineering skills, combining real-time file stream parsing, dynamic regular-expression scanners, and customized dictionary-based Natural Language Processing.</p>
+          
+          <h3 style="margin-top: 2rem; margin-bottom: 0.75rem;">Algorithmic Scoring Formula</h3>
+          <p>The core score indexer runs an advanced multi-weighted scoring mechanism:
+            <br><strong>ATS Score = (KeywordOverlaps × 0.35) + (Skills Breadth × 0.25) + (StructuralMetrics × 0.20) + (ExperienceDepth × 0.20)</strong>
+          </p>
+          <p>Unlike basic parsers that look for exact formatting strings, our vocabulary engine scans context words case-insensitively using anchor barriers, isolating technology groups dynamically into languages, cloud, frontend, and backend tiers.</p>
+          
+          <h3 style="margin-top: 2rem; margin-bottom: 0.75rem;">Major Project Objectives</h3>
+          <ul class="bullet-list" style="margin-bottom: 1.5rem;">
+            <li>Demonstrate end-to-end full stack JWT architecture.</li>
+            <li>Implement local file JSON document fallbacks to guarantee 100% database recovery offline.</li>
+            <li>Incorporate client-side Single Page Application (SPA) state-routers.</li>
+            <li>Integrate micro-interactive analytics dashboards (Chart.js / gauges).</li>
+          </ul>
+        </div>
+
+        <div class="glass-panel">
+          <h3 style="margin-bottom: 1.5rem;">System Architecture Map</h3>
+          
+          <div style="font-size: 0.9rem; line-height: 1.6; display:flex; flex-direction:column; gap: 1rem;">
+            <div>
+              <strong style="color:var(--accent-primary);">1. Frontend Client Layer</strong>
+              <div style="color:var(--text-secondary); padding-left: 1rem;">Single Page App (SPA) • Custom Theme Engines • ChartJS telemetry</div>
+            </div>
+            <div>
+              <strong style="color:var(--accent-secondary);">2. Server Middleware Layer</strong>
+              <div style="color:var(--text-secondary); padding-left: 1rem;">JWT auth verify • Multer upload checkers • PDF text parsers</div>
+            </div>
+            <div>
+              <strong style="color:var(--color-success);">3. Custom AI Extraction Layer</strong>
+              <div style="color:var(--text-secondary); padding-left: 1rem;">Regular expression scanners • Domain mapping dictionaries • Scoring formulas</div>
+            </div>
+            <div>
+              <strong style="color:var(--color-warning);">4. Persistence Layer</strong>
+              <div style="color:var(--text-secondary); padding-left: 1rem;">Mongoose MongoDB • Local DB Fallback file system</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ALERTS POPUP TOAST -->
+  <div class="alert-popup" id="alert-toast">
+    This is an alert message!
+  </div>
+
+  <!-- SPA JS CONTROLLERS AND STORES -->
+  <script src="js/theme.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/router.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script src="js/report.js"></script>
+  <script src="js/admin.js"></script>
+
+</body>
+</html>

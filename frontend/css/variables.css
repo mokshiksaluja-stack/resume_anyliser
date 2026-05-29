@@ -1,0 +1,88 @@
+/**
+ * AI Resume Analyzer - Fluid CSS Design Tokens
+ * 
+ * Defines core variables, responsive grids, premium HSL color ranges,
+ * glassmorphic variables, and transition layers for dark/light themes.
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  /* Fonts */
+  --font-heading: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  /* HSL Colors: Premium Glowing Dark Theme (Default) */
+  --hue-primary: 228;
+  --hue-accent: 250; /* Indigo */
+  --hue-accent-alt: 190; /* Cyan */
+  --hue-success: 150; /* Emerald */
+  --hue-warning: 35; /* Amber */
+  --hue-danger: 350; /* Crimson */
+
+  /* Dark Theme Palette */
+  --bg-raw: 222 47% 11%; /* #0f172a */
+  --bg-primary: hsl(var(--hue-primary) 47% 7%);
+  --bg-secondary: hsl(var(--hue-primary) 35% 12%);
+  --bg-tertiary: hsl(var(--hue-primary) 28% 18%);
+  
+  --text-primary: hsl(220 40% 98%);
+  --text-secondary: hsl(215 20% 75%);
+  --text-muted: hsl(215 15% 55%);
+  
+  --accent-primary: hsl(var(--hue-accent) 85% 65%);
+  --accent-primary-glow: hsla(var(--hue-accent), 85%, 65%, 0.15);
+  --accent-secondary: hsl(var(--hue-accent-alt) 90% 50%);
+  --accent-secondary-glow: hsla(var(--hue-accent-alt), 90%, 50%, 0.15);
+  
+  --color-success: hsl(var(--hue-success) 80% 45%);
+  --color-success-glow: hsla(var(--hue-success), 80%, 45%, 0.15);
+  --color-warning: hsl(var(--hue-warning) 90% 50%);
+  --color-warning-glow: hsla(var(--hue-warning), 90%, 50%, 0.15);
+  --color-danger: hsl(var(--hue-danger) 85% 55%);
+  --color-danger-glow: hsla(var(--hue-danger), 85%, 55%, 0.15);
+
+  /* Glassmorphism Styles */
+  --glass-bg: rgba(15, 23, 42, 0.45);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  --glass-blur: blur(12px);
+
+  /* Transitions & Radii */
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+  --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Light Theme Variables Override */
+body.light-theme {
+  --bg-primary: hsl(220 30% 96%);
+  --bg-secondary: hsl(0 0% 100%);
+  --bg-tertiary: hsl(220 20% 90%);
+  
+  --text-primary: hsl(222 47% 11%);
+  --text-secondary: hsl(215 25% 35%);
+  --text-muted: hsl(215 15% 55%);
+  
+  --accent-primary: hsl(var(--hue-accent) 75% 55%);
+  --accent-primary-glow: hsla(var(--hue-accent), 75%, 55%, 0.1);
+  --accent-secondary: hsl(var(--hue-accent-alt) 85% 40%);
+  --accent-secondary-glow: hsla(var(--hue-accent-alt), 85%, 40%, 0.1);
+  
+  --color-success: hsl(var(--hue-success) 75% 35%);
+  --color-success-glow: hsla(var(--hue-success), 75%, 35%, 0.1);
+  --color-warning: hsl(var(--hue-warning) 85% 40%);
+  --color-warning-glow: hsla(var(--hue-warning), 85%, 40%, 0.1);
+  --color-danger: hsl(var(--hue-danger) 80% 48%);
+  --color-danger-glow: hsla(var(--hue-danger), 80%, 48%, 0.1);
+
+  /* Glassmorphism Styles for Light Theme */
+  --glass-bg: rgba(255, 255, 255, 0.65);
+  --glass-border: rgba(15, 23, 42, 0.08);
+  --glass-shadow: 0 8px 32px 0 rgba(15, 23, 42, 0.06);
+  --glass-blur: blur(16px);
+}
